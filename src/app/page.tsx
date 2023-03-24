@@ -1,91 +1,47 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-import styles from './page.module.css'
+'use client';
+import { useQuery } from "@apollo/client";
+import Cards from '@/components/Cards';
+import SearchBar from '@/components/SearchBar';
+import Subheader from '@/components/SubHeader';
+import POKEMON_QUERY from "@/utils/graphql/Pokemons";
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import SearchResults from "@/components/SearchResults";
+import Filter from "@/components/Filter";
+import fetchData from "@/components/fetchData";
 
-const inter = Inter({ subsets: ['latin'] })
+function Homepage() {
+  const [searchTerm, setSearchTerm] = useState('');
 
-export default function Home() {
-  return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-        <div className={styles.thirteen}>
-          <Image src="/thirteen.svg" alt="13" width={40} height={31} priority />
-        </div>
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://beta.nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+  function SearchItems(searchTerm: string ) {
+   const { loading, error, data} = useQuery(POKEMON_QUERY, {
+   variables: { limit: 151, name:searchTerm }
+    });
+    console.log('search data', data);
+    return data?.pokemon_v2_pokemon;
+   }
+  
+  function handleSearch(searchTerm:string) {
+    setSearchTerm(searchTerm);
+  }
+    const pokemons = searchTerm !== '' ? SearchItems(searchTerm) : fetchData();
+     console.log('MINT', pokemons);
+     return (
+    <div className='mx-7'>
+     <SearchBar onSearch={handleSearch} />
+     {searchTerm ? <Filter /> : <Subheader /> }
+     <SearchResults data={pokemons} />
+    <div className='grid lg:grid-cols-2 md:grid-cols-2 xl:grid-cols-4 gap-4 w-full'>
+    {pokemons && pokemons?.map((pokemon: PokemonData) => 
+     <Link href={`Profile/${pokemon.id}`} key={pokemon.id} className=''>
+     <Cards pokemon={pokemon} /> 
+     </Link>
+    )
+    }
+    </div>
+    </div>
   )
 }
+
+export default Homepage;
+
