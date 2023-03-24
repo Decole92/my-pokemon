@@ -12,20 +12,19 @@ import fetchData from "@/components/fetchData";
 
 function Homepage() {
   const [searchTerm, setSearchTerm] = useState('');
-
-  function SearchItems(searchTerm: string ) {
+  
+function SearchItems(searchTerm: string ) {
    const { loading, error, data} = useQuery(POKEMON_QUERY, {
    variables: { limit: 151, name:searchTerm }
     });
-    console.log('search data', data);
-    return data?.pokemon_v2_pokemon;
+   return data?.pokemon_v2_pokemon;
    }
   
   function handleSearch(searchTerm:string) {
     setSearchTerm(searchTerm);
   }
     const pokemons = searchTerm !== '' ? SearchItems(searchTerm) : fetchData();
-     console.log('MINT', pokemons);
+    
      return (
     <div className='mx-7'>
      <SearchBar onSearch={handleSearch} />

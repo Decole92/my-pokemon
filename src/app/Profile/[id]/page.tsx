@@ -9,17 +9,18 @@ params: {
   }
 }
  function page({ params: {id}} : Props) {
- const {loading, error, data} = SearchItems(id);
+ //const {data} = SearchItems(id);
   
  function SearchItems(id: number){
   const { loading, error, data} = useQuery(GET_POKEMON, {
     variables: {id},
   })
-  return {loading, error, data};
+  return data;
  }
+ const data = SearchItems(id);
     return (
     <div className='mx-5'>
-    <SearchResults loading={loading} error={error} data={data} />
+    <SearchResults data={data} />
     {
       data && <ProfileCard pokemon={data} /> 
     }

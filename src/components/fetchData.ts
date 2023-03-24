@@ -10,7 +10,6 @@ const fetchData = () => {
     const {loading, error, data} = useQuery(QUERY, {
      variables: {limit: 151},
     })
-      console.log('coming from func', data?.pokemon_v2_pokemon);
-      return data?.pokemon_v2_pokemon;
+     return data?.pokemon_v2_pokemon;
     }
     export default fetchData;
