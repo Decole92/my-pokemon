@@ -15,12 +15,12 @@ params: {
   const { loading, error, data} = useQuery(GET_POKEMON, {
     variables: {id},
   })
-  return data;
+  return {loading, error, data};
  }
- const data = SearchItems(id);
+ const {loading, error, data} = SearchItems(id);
     return (
     <div className='mx-5'>
-    <SearchResults data={data} />
+    <SearchResults  loading={loading} error={error} data={data} />
     {
       data && <ProfileCard pokemon={data} /> 
     }
